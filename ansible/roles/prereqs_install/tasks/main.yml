@@ -1,0 +1,41 @@
+---
+# TODO: Separate these tasks into a conditional check for dnf or apt, and then run two separate playbooks
+# tasks file for prereqs_install
+# System and app updates
+- name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+- name: Upgrade the OS (apt-get dist-upgrade)
+  ansible.builtin.apt:
+    upgrade: dist
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+# Coder Utility Setup
+- name: Install utilities
+  ansible.builtin.apt:
+    pkg:
+      - wget
+      - vim
+      - curl
+      - open-iscsi
+      - nfs-common
+      - grep
+      - util-linux
+# Clean and reboot
+- name: Remove dependencies that are no longer required and purge their configuration files
+  ansible.builtin.apt:
+    autoremove: yes
+    purge: true
+- name: Run the equivalent of "apt-get clean" as a separate step
+  ansible.builtin.apt:
+    clean: yes
+- name: Check if reboot required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+- name: Reboot if required
+  ansible.builtin.reboot:
+  when: reboot_required_file.stat.exists
