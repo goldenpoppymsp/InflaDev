@@ -39,3 +39,17 @@
 - name: Reboot if required
   ansible.builtin.reboot:
   when: reboot_required_file.stat.exists
+- name: Copy rke2 scripts
+  ansible.builtin.copy:
+    src: k3s-install.sh
+    dest: /tmp/
+    owner: guatejason
+    group: guatejason
+    mode: "0755"
+- name: Copy zarf install script
+  ansible.builtin.copy:
+    src: zarf-install.sh
+    dest: /tmp/
+    owner: guatejason
+    group: guatejason
+    mode: "0755"

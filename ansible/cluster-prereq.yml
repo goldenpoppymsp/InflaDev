@@ -2,6 +2,7 @@
 - name: Prereq
   hosts: rke2_nodes
   become: true
+  gather_facts: true
   roles:
     - prereqs_install
 # TODO add tasks layout to the roles
